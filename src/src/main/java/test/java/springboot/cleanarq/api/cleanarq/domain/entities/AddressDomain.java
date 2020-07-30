@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Builder
 @Getter
 @Setter
@@ -17,6 +19,6 @@ public class AddressDomain {
     private String state;
     private String country;
     private String zipCode;
-    private Double latitude;
-    private Double longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 }

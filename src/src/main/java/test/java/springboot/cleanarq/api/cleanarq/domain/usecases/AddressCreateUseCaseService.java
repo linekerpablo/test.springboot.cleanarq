@@ -9,6 +9,7 @@ import test.java.springboot.cleanarq.api.cleanarq.domain.usecases.interfaces.Add
 import test.java.springboot.cleanarq.api.cleanarq.gateway.integration.interfaces.GoogleGeocodingGetLatLngUseCase;
 import test.java.springboot.cleanarq.api.cleanarq.gateway.interfaces.AddressCreateGateway;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Service
@@ -31,8 +32,8 @@ public class AddressCreateUseCaseService implements AddressCreateUseCase {
                     addressDomain.getState()
             );
 
-            addressDomain.setLatitude((Double) response.get("lat"));
-            addressDomain.setLongitude((Double) response.get("lng"));
+            addressDomain.setLatitude((BigDecimal) response.get("lat"));
+            addressDomain.setLongitude((BigDecimal) response.get("lng"));
         }
 
         addressDomain = addressCreateGateway.execute(addressDomain);

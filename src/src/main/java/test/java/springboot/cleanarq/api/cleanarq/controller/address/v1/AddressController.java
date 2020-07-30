@@ -1,8 +1,7 @@
 package test.java.springboot.cleanarq.api.cleanarq.controller.address.v1;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,9 +14,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping({"/address"})
@@ -38,6 +34,7 @@ public class AddressController {
     private AddressDeleteByIdUseCase addressDeleteByIdUseCase;
 
     @PostMapping
+    @ApiOperation(value = "Cadastra um novo endereço")
     public ResponseEntity<Object> create(@Valid @RequestBody AddressModelRequest request) throws URISyntaxException {
         AddressDomain address = AddressModelRequestToAddress.Translate(request, null);
 
@@ -50,6 +47,7 @@ public class AddressController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Atualiza um endereço pelo Id informado")
     public ResponseEntity<Object> update(@RequestBody AddressModelRequest request, @PathVariable long id) {
 
         AddressDomain address = addressFindByIdUseCase.execute(id);
@@ -65,22 +63,18 @@ public class AddressController {
     }
 
     @GetMapping("/{id}")
-    public EntityModel<AddressDomain> findById(@PathVariable long id) throws Exception {
-        AddressDomain address = addressFindByIdUseCase.execute(id);
+    @ApiOperation(value = "Retorna um endereço pelo Id informado")
+    public AddressDomain findById(@PathVariable long id) throws Exception {
+        AddressDomain addressDomain = addressFindByIdUseCase.execute(id);
 
-        if (address == null)
+        if (addressDomain == null)
             throw new Exception("id-" + id);
 
-        EntityModel<AddressDomain> resource = EntityModel.of(address);
-
-        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).findAll());
-
-        resource.add(linkTo.withRel("all-addresses"));
-
-        return resource;
+        return addressDomain;
     }
 
     @GetMapping
+    @ApiOperation(value = "Retorna todos endereços cadastrados")
     public List<AddressDomain> findAll() {
         List<AddressDomain> listAddressDomain = addressFindAllUseCase.execute();
 
@@ -88,6 +82,7 @@ public class AddressController {
     }
 
     @DeleteMapping("{id}")
+    @ApiOperation(value = "Deleta um endereço pelo Id informado")
     public void delete(@PathVariable Long id) {
         addressDeleteByIdUseCase.execute(id);
     }

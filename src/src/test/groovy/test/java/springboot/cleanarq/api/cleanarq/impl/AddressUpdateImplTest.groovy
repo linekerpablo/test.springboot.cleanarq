@@ -1,23 +1,23 @@
 package test.java.springboot.cleanarq.api.cleanarq.impl
 
-import test.java.springboot.cleanarq.api.cleanarq.domain.entities.AddressDomain;
-import test.java.springboot.cleanarq.api.cleanarq.domain.usecases.AddressCreateUseCaseService
+import test.java.springboot.cleanarq.api.cleanarq.domain.entities.AddressDomain
+import test.java.springboot.cleanarq.api.cleanarq.domain.usecases.AddressUpdateUseCaseService
 import test.java.springboot.cleanarq.api.cleanarq.gateway.integration.interfaces.GoogleGeocodingGetLatLngUseCase
-import test.java.springboot.cleanarq.api.cleanarq.gateway.interfaces.AddressCreateGateway
+import test.java.springboot.cleanarq.api.cleanarq.gateway.interfaces.AddressUpdateGateway
 
-class AddressCreateImplTest extends spock.lang.Specification {
-    def addressCreateGateway = Mock(AddressCreateGateway)
+class AddressUpdateImplTest extends spock.lang.Specification {
+    def addressUpdateGateway = Mock(AddressUpdateGateway)
     def googleGeocodingGetLatLngUseCase = Mock(GoogleGeocodingGetLatLngUseCase);
-    def addressCreateUseCase = new AddressCreateUseCaseService(addressCreateGateway, googleGeocodingGetLatLngUseCase)
+    def addressUpdateUseCase = new AddressUpdateUseCaseService(addressUpdateGateway, googleGeocodingGetLatLngUseCase)
 
-    def "should be create an address, even without entering latitude and longitude"() {
+    def "should be update an address, even without entering latitude and longitude"() {
         given:
-        AddressDomain addressDomain = createAddressDomainWithoutLatLng();
+        AddressDomain addressDomain = updateAddressDomainWithoutLatLng();
 
         when:
         1 * googleGeocodingGetLatLngUseCase.execute(_ as Integer, _ as String, _ as String, _ as String) >> getLatLng()
-        1 * addressCreateGateway.execute(addressDomain) >> createAddressDomainWithoutLatLng()
-        def result = addressCreateUseCase.execute(addressDomain)
+        1 * addressUpdateGateway.execute(addressDomain) >> updateAddressDomainWithoutLatLng()
+        def result = addressUpdateUseCase.execute(addressDomain)
 
         then:
         result.getCity() == addressDomain.getCity()
@@ -30,14 +30,14 @@ class AddressCreateImplTest extends spock.lang.Specification {
         result.getZipCode() == addressDomain.getZipCode()
     }
 
-    def "should be create an address"() {
+    def "should be update an address"() {
         given:
-        AddressDomain addressDomain = createAddressDomainWitLatLng();
+        AddressDomain addressDomain = updateAddressDomainWithLatLng();
 
         when:
         0 * googleGeocodingGetLatLngUseCase.execute(_ as Integer, _ as String, _ as String, _ as String)
-        1 * addressCreateGateway.execute(addressDomain) >> createAddressDomainWitLatLng()
-        def result = addressCreateUseCase.execute(addressDomain)
+        1 * addressUpdateGateway.execute(addressDomain) >> updateAddressDomainWithLatLng()
+        def result = addressUpdateUseCase.execute(addressDomain)
 
         then:
         result.getCity() == addressDomain.getCity()
@@ -52,7 +52,7 @@ class AddressCreateImplTest extends spock.lang.Specification {
         result.getLongitude() == addressDomain.getLongitude()
     }
 
-    private AddressDomain createAddressDomainWithoutLatLng() {
+    private AddressDomain updateAddressDomainWithoutLatLng() {
         return AddressDomain.builder()
                 .streetName("Rua ternuar")
                 .number(233)
@@ -65,7 +65,7 @@ class AddressCreateImplTest extends spock.lang.Specification {
                 .build();
     }
 
-    private AddressDomain createAddressDomainWitLatLng() {
+    private AddressDomain updateAddressDomainWithLatLng() {
         return AddressDomain.builder()
                 .streetName("Rua ternuar")
                 .number(233)
